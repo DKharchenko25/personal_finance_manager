@@ -1,5 +1,6 @@
 package com.dk.pet.personal_finance_manager.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -9,7 +10,9 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -18,16 +21,19 @@ import java.util.UUID;
 @Table(name = "categories")
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class Category {
 
     @Id
     @GeneratedValue
     private UUID id;
 
-    @NotBlank(message = "Category name is mandatory")
+    @NotBlank(message = "{validation.category.name.notBlank}")
+    @Column(unique = true)
     private String name;
 
-    @NotNull(message = "Category type is mandatory")
+    @NotNull(message = "{validation.category.type.notNull}")
     @Enumerated(EnumType.STRING)
     private Type type;
 

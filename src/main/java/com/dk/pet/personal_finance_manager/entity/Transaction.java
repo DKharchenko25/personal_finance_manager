@@ -1,14 +1,18 @@
 package com.dk.pet.personal_finance_manager.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -19,23 +23,28 @@ import java.util.UUID;
 @Table(name = "transactions")
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class Transaction {
 
     @Id
     @GeneratedValue
     private UUID id;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @NotNull(message = "Date is mandatory")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
+
+    @NotNull(message = "{validation.transaction.date.notNull}")
     private LocalDateTime date;
 
-    @NotNull(message = "Amount is mandatory")
+    @NotNull(message = "{validation.amount.notNull}")
+    @Positive(message = "{validation.amount.positive}")
     private BigDecimal amount;
-
-    @ManyToOne
-    private Category category;
 
     private String description;
 
