@@ -1,9 +1,7 @@
 package com.dk.pet.personal_finance_manager.service;
 
-import com.dk.pet.personal_finance_manager.dto.transaction.CreateTransactionRequest;
 import com.dk.pet.personal_finance_manager.entity.Transaction;
 import com.dk.pet.personal_finance_manager.exception.ResourceNotFoundException;
-import com.dk.pet.personal_finance_manager.mapper.TransactionMapper;
 import com.dk.pet.personal_finance_manager.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,7 +18,6 @@ public class TransactionServiceImpl implements TransactionService {
     private final TransactionRepository transactionRepository;
     private final CategoryService categoryService;
     private final UserService userService;
-    private final TransactionMapper transactionMapper;
 
     @Override
     public Transaction getTransactionById(UUID id) {
@@ -29,16 +26,24 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Page<Transaction> getAllTransactionsByUserId(UUID userId, UUID categoryId, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
+    public Transaction getTransactionByIdAndUserId(UUID id, UUID userId) {
+        return transactionRepository.findByIdAndUserId(id, userId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("Transaction with id %s not found for user %s", id, userId)
+                ));
+    }
+
+    @Override
+    public Page<Transaction> getAllTransactionsByUserId(UUID userId, UUID categoryId,
+                                                        LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
         return transactionRepository.findAllByUserId(userId, categoryId, startDate, endDate, pageable);
     }
 
     @Override
     @Transactional
-    public Transaction createTransaction(CreateTransactionRequest request) {
-        Transaction transaction = transactionMapper.requestToEntity(request);
-        transaction.setUser(userService.getUserById(request.getUserId()));
-        transaction.setCategory(categoryService.getCategoryById(request.getCategoryId()));
+    public Transaction createTransaction(Transaction transaction, UUID userId, UUID categoryId) {
+        transaction.setUser(userService.getUserById(userId));
+        transaction.setCategory(categoryService.getCategoryById(categoryId));
         return transactionRepository.save(transaction);
     }
 

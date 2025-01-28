@@ -8,7 +8,8 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS categories (
     id uuid PRIMARY KEY,
     name VARCHAR(255) NOT NULL UNIQUE,
-    type VARCHAR(255) NOT NULL
+    type VARCHAR(255) NOT NULL,
+    user_id uuid NOT NULL REFERENCES users(id)
 );
 
 CREATE TABLE IF NOT EXISTS transactions (

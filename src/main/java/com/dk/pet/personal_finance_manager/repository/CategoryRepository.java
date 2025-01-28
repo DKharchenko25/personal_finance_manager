@@ -11,5 +11,5 @@ import java.util.UUID;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, UUID> {
-    Page<Category> findAllByType(Type type, Pageable pageable);
+    Page<Category> findAllByUserIdAndType(UUID userId, Type type, Pageable pageable);
 }

@@ -11,6 +11,7 @@ public interface BudgetMapper {
 
     @Mapping(target = "category", ignore = true)
     @Mapping(target = "user", ignore = true)
+    @Mapping(target = "id", ignore = true)
     Budget requestToEntity(CreateBudgetRequest request);
 
     @Mapping(target = "userId", source = "user.id")

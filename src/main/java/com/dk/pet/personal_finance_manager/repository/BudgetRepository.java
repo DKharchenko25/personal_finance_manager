@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -22,4 +23,6 @@ public interface BudgetRepository extends JpaRepository<Budget, UUID> {
                                  LocalDateTime startDate,
                                  LocalDateTime endDate,
                                  Pageable pageable);
+
+    Optional<Budget> findByIdAndUserId(UUID id, UUID userId);
 }

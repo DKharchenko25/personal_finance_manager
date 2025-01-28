@@ -10,5 +10,9 @@ import java.util.UUID;
 public interface CategoryService {
     Category getCategoryById(UUID id);
 
-    Page<Category> getAllCategoriesByType(Type type, Pageable pageable);
+    Page<Category> getAllCategoriesByUserIdAndType(UUID userId, Type type, Pageable pageable);
+
+    Category createCategory(Category category, UUID userId);
+
+    void deleteCategoryById(UUID id);
 }

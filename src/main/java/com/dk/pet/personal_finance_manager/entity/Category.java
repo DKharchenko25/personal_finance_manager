@@ -4,8 +4,11 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -37,17 +40,22 @@ public class Category {
     @Enumerated(EnumType.STRING)
     private Type type;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        Category that = (Category) o;
-        return Objects.equals(id, that.id)
-                && Objects.equals(name, that.name)
-                && type == that.type;
+        Category category = (Category) o;
+        return Objects.equals(id, category.id)
+                && Objects.equals(name, category.name)
+                && type == category.type
+                && Objects.equals(user, category.user);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, type);
+        return Objects.hash(id, name, type, user);
     }
 }

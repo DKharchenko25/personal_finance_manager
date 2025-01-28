@@ -1,10 +1,8 @@
 package com.dk.pet.personal_finance_manager.service;
 
-import com.dk.pet.personal_finance_manager.dto.budget.CreateBudgetRequest;
 import com.dk.pet.personal_finance_manager.dto.budget.UpdateBudgetRequest;
 import com.dk.pet.personal_finance_manager.entity.Budget;
 import com.dk.pet.personal_finance_manager.exception.ResourceNotFoundException;
-import com.dk.pet.personal_finance_manager.mapper.BudgetMapper;
 import com.dk.pet.personal_finance_manager.repository.BudgetRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,9 +19,8 @@ import java.util.UUID;
 public class BudgetServiceImpl implements BudgetService {
 
     private final BudgetRepository budgetRepository;
-    private final CategoryServiceImpl categoryService;
-    private final UserServiceImpl userService;
-    private final BudgetMapper budgetMapper;
+    private final CategoryService categoryService;
+    private final UserService userService;
 
     @Override
     public Page<Budget> getAllBudgetsByUserId(UUID userId, UUID categoryId, LocalDateTime startDate,
@@ -38,11 +35,18 @@ public class BudgetServiceImpl implements BudgetService {
     }
 
     @Override
+    public Budget getBudgetByIdAndUserId(UUID id, UUID userId) {
+        return budgetRepository.findByIdAndUserId(id, userId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("Budget with id %s not found for user %s", id, userId)
+                ));
+    }
+
+    @Override
     @Transactional
-    public Budget createBudget(CreateBudgetRequest request) {
-        Budget budget = budgetMapper.requestToEntity(request);
-        budget.setUser(userService.getUserById(request.getUserId()));
-        budget.setCategory(categoryService.getCategoryById(request.getCategoryId()));
+    public Budget createBudget(Budget budget, UUID userId, UUID categoryId) {
+        budget.setUser(userService.getUserById(userId));
+        budget.setCategory(categoryService.getCategoryById(categoryId));
         return budgetRepository.save(budget);
     }
 

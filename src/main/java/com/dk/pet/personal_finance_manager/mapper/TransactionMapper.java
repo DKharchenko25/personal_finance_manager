@@ -11,6 +11,7 @@ public interface TransactionMapper {
 
     @Mapping(target = "category", ignore = true)
     @Mapping(target = "user", ignore = true)
+    @Mapping(target = "id", ignore = true)
     Transaction requestToEntity(CreateTransactionRequest request);
 
     @Mapping(target = "userId", source = "user.id")
